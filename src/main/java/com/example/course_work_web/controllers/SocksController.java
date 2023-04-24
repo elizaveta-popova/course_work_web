@@ -25,14 +25,17 @@ import org.springframework.web.bind.annotation.*;
         this.socksService = socksService;
     }
 
-    @PostMapping("/add")
+    @PostMapping("")
     @Operation(summary = "Добавление партии носков", description = "Укажите цвет, процентное содержание хлопка, размер, количество пар носков")
     @ApiResponse(responseCode = "200", description = "Партия носков успешно добавлена", content = {
             @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Sock.class)))
     })
-    public ResponseEntity<Sock> addSocks(@RequestBody SockDto sockDto) {
-        Sock addSock = socksService.addSocks(sockDto);
-        return ResponseEntity.ok(addSock);
+    public ResponseEntity<Void> addSocks(@RequestBody SockDto sockDto) {
+        if (socksService.addSocks(new SockDto())) {
+        return ResponseEntity.ok().build();
+
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @PutMapping
@@ -42,10 +45,12 @@ import org.springframework.web.bind.annotation.*;
             @ApiResponse(responseCode = "400", description = "Параметры запроса имеют некорректный формат"),
             @ApiResponse(responseCode = "500", description = "Произошла ошибка")
     })
-    public ResponseEntity<Sock> issueSock(@RequestBody SockDto sockDto) {
-       Sock issueSock = socksService.issueSock(sockDto);
-        return ResponseEntity.ok(issueSock);
+    public ResponseEntity<Void> issueSock(@RequestBody SockDto sockDto) {
+       if (socksService.issueSock(new SockDto())){
+        return ResponseEntity.ok().build();
     }
+        return ResponseEntity.notFound().build();
+}
 
     @GetMapping("/getAll")
     @Operation(summary = "Получить все имеющиеся на складе носки")
@@ -56,6 +61,7 @@ import org.springframework.web.bind.annotation.*;
                            @RequestParam(required = false, name = "размер") Size size,
                            @RequestParam(required = false, name = "минимальное содержание хлопка") Integer cottonMin,
                            @RequestParam(required = false, name = "максимальное содержание хлопка") Integer cottonMax) {
+
         return socksService.getAllSocks(color, size, cottonMin, cottonMax);
     }
 
@@ -69,7 +75,9 @@ import org.springframework.web.bind.annotation.*;
 
     })
     public ResponseEntity<Void> deleteSocks(@RequestBody SockDto sockDto) {
-        socksService.deleteSocks(sockDto);
-        return ResponseEntity.ok().build();
+        if (socksService.deleteSocks(new SockDto())) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }

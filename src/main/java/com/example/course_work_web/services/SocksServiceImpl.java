@@ -24,7 +24,7 @@ public class SocksServiceImpl implements SocksService {
     }
 
     @Override
-      public Sock addSocks(SockDto sockDto) {
+      public boolean addSocks(SockDto sockDto) {
         validateRequest (sockDto);
         Sock sock = mapToSock(sockDto);
         if (socksStock.containsKey(sock)) {
@@ -32,7 +32,7 @@ public class SocksServiceImpl implements SocksService {
         } else {
             socksStock.put(sock, sockDto.getQuantity());
         }
-        return sock;
+        return true;
     }
 
     private void validateRequest (SockDto sockDto) {
@@ -60,13 +60,14 @@ public class SocksServiceImpl implements SocksService {
         return sockDto;
     }
     @Override
-    public Sock issueSock (SockDto sockDto) {
+    public boolean issueSock (SockDto sockDto) {
         decreaseSockQuantity(sockDto, true);
-        return null;
+        return true;
     }
 
-    public void deleteSocks (SockDto sockDto) {
+    public boolean deleteSocks (SockDto sockDto) {
         decreaseSockQuantity (sockDto, false);
+        return false;
     }
 
     private void decreaseSockQuantity (SockDto sockDto, boolean isIssue) {
@@ -89,7 +90,7 @@ public class SocksServiceImpl implements SocksService {
             if (size != null && !entry.getKey().getSize().equals(size)) {
                 continue;
             }
-            if (cottonMin != null && entry.getKey().getCottonPart() < cottonMin) {
+            if (cottonMin != null && entry.getKey().getCottonPart() > cottonMin) {
                 continue;
             }
             if (cottonMax != null && entry.getKey().getCottonPart() < cottonMax) {
@@ -99,60 +100,5 @@ public class SocksServiceImpl implements SocksService {
             }
         return total;
     }
-
-
-//
-//
-//
-//    @Override
-//    public ArrayList<Map.Entry<Sock, Long>> getAllSocks() {
-//        return new ArrayList<>(socksStock.entrySet());
-//    }
-//
-//    @Override
-//    public Sock deleteSocks(Sock sock) {
-//        Sock existingSock = socksList.remove(id);
-//        if (existingSock == null) {
-//            throw new SocksNotFoundException();
-//        }
-//        this.filesService.saveToFile (STORE_FILES, this.socksList);
-//        return Sock.from(id, existingSock);
-//    }
-//
-//    @Override
-//    public Sock getSocks(int id) {
-//        return socksList.get(id);
-//    }
-//
-//
-//    @Override
-//    public Sock editSocks(int id, Sock sock)  {
-//        Sock existingSock = socksList.get(id);
-//        if (existingSock == null) {
-//            throw new SocksNotFoundException();
-//        }
-//        socksList.put(id, sock);
-//        this.filesService.saveToFile (STORE_FILES, this.socksList);
-//        return Sock.from(id, sock);
-//    }
-//
-////////?????
-//    @Override
-//    public String getCountSocksByParameters(SocksColor color, SocksSize size, SocksCottonPart cottonMin, SocksCottonPart cottonMax) {
-//        long total = 0;
-//        for (Map.Entry<Sock, Long> socks : socksStock.entrySet()) {
-//            if (socks.getKey().getSocksColor() == color &&
-//                    socks.getKey().getSocksSize() == size &&
-//                    socks.getKey().getSocksCottonPart().getText() >= cottonMin.getText() &&
-//                    socks.getKey().getSocksCottonPart().getText() <= cottonMax.getText()) {
-//                total += socks.getValue();
-//            }
-//        }
-//        return Long.toString(total);
-//    }
-//
-
-
-
 
 }

@@ -10,13 +10,4 @@ public enum Size {
     Size(int maxSize) {
         this.maxSize = maxSize;
     }
-    @JsonCreator
-    public static Size convertSize (int value) {
-        for (Size size : Size.values()) {
-            if (value == size.maxSize) {
-                return size;
-            }
-        }
-        throw new RuntimeException("Такого размера нет.");
-    }
 }
